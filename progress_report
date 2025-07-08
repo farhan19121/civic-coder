@@ -5,3 +5,9 @@
 2.Symptom encoding and caching included.
 
 3.Modular structure with reusability.
+
+========== COMMIT-2 =========
+
+1. Model loading complete
+2. Caching mechanism built
+3. Basic NLP for symptom extraction implemented

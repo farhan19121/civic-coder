@@ -4,6 +4,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 import os
+import re
 import threading
 import time
 import json
@@ -60,3 +61,50 @@ def load_model():
             symptom_list = json.load(f)
     else:
         model, le_prognosis, symptom_list = train_and_save_model()
+
+
+def clean_text(text):
+    """
+    Normalize text:
+    - Lowercase
+    - Remove punctuation except '-'
+    - Replace multiple spaces with one
+    """
+    text = text.lower()
+    # Keep letters, digits, spaces, and hyphens (because symptom names can be hyphenated)
+    text = re.sub(r"[^a-z0-9\s\-]", " ", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
+
+def extract_symptoms(text, known_symptoms):
+    """
+    Using simple keyword matching (considering whole words),
+    extracting matched symptoms from text.
+    """
+    symptoms_found = set()
+    # Prepareing lowercase known symptoms for matching
+    # Map normalized symptom names for in-text matching
+    normalized_symptoms = {}
+    for sym in known_symptoms:
+        nsym = sym.replace('_', ' ').lower()
+        normalized_symptoms[nsym] = sym
+
+    #converting text to tokens set
+    text_tokens = set(text.split())
+
+    # Match symptoms which appear as full words or word sequences in user text
+    # Check for multi-word symptoms (like 'nodal skin eruptions')
+    for n_sym, original_sym in normalized_symptoms.items():
+        n_sym_tokens = n_sym.split()
+        # Sliding window in text tokens sequence:
+        # Since we have set(text_tokens), we need string matching on text itself:
+        # We'll do simple substring matching allowing for word boundaries
+        pattern = r'\b' + re.escape(n_sym) + r'\b'
+        if re.search(pattern, text):
+            symptoms_found.add(original_sym)
+        else:
+            # Also check if all tokens appear in text tokens (fuzzy)
+            if all(t in text_tokens for t in n_sym_tokens):
+                symptoms_found.add(original_sym)
+
+    return list(symptoms_found)
