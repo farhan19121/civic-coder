@@ -17,6 +17,11 @@ from collections import defaultdict
 from googletrans import Translator
 import langdetect
 
+app = Flask(__name__)
+CORS(app)  # Enable CORS for frontend communication
+
+
+translator = Translator()
 # ========== Global Variables and Cache ========== #
 
 MODEL_PATH = 'model.joblib'
@@ -126,6 +131,19 @@ def symptoms_to_vector(symptoms, all_symptoms):
         if sym in symptom_set:
             vector[idx] = 1
     return vector.reshape(1, -1)
+
+def predict_disease(symptom_vector):
+    """
+    Uses the global model to predict:
+    Returns predicted disease string, confidence score (probability max)
+    """
+    global model, le_prognosis
+    proba = model.predict_proba(symptom_vector)[0]
+    max_prob_idx = np.argmax(proba)
+    confidence = float(proba[max_prob_idx])
+    disease_raw = le_prognosis.inverse_transform([max_prob_idx])[0]
+    return disease_raw, confidence
+
 
 def recommendation_by_confidence(confidence, symptoms):
     """
@@ -283,3 +301,80 @@ def predict():
             "error": "Internal server error occurred processing your request."
         }), 500
 
+@app.route('/predict-hindi', methods=['POST'])
+def predict_hindi():
+    try:
+        data = request.get_json(force=True)
+        if not data or 'text' not in data:
+            return jsonify({
+                "error": "इनपुट में 'text' फ़ील्ड गायब है।"  # "Missing 'text' field in input" in Hindi
+            }), 400
+
+        user_text = str(data['text'])
+        if len(user_text.strip()) == 0:
+            return jsonify({
+                "error": "इनपुट खाली है।"  # "Input is empty" in Hindi
+            }), 400
+
+        # Clean and normalize input text (Hindi text will be preserved)
+        cleaned_text = clean_text(user_text)
+
+        # Extract symptoms from text using known symptoms list
+        matched_symptoms = extract_symptoms(cleaned_text, symptom_list)
+
+        # If no symptoms matched, return partial info but recommend professional consult
+        if len(matched_symptoms) == 0:
+            response = make_response(
+                predicted_disease="अज्ञात",  # "Unknown"
+                confidence_score=0.0,
+                symptoms_matched=[],
+                recommendation="इनपुट से स्पष्ट लक्षणों की पहचान नहीं की जा सकी। कृपया विशिष्ट लक्षण प्रदान करें या स्वास्थ्य देखभाल पेशेवर से परामर्श लें।"  # Hindi version of the message
+            )
+            return jsonify(translate_response_to_hindi(response))
+
+        # Check cache for prediction on matched symptoms (order independent)
+        symptoms_key = frozenset(matched_symptoms)
+        cached_result = cache_get(symptoms_key)
+        if cached_result is not None:
+            return jsonify(translate_response_to_hindi(cached_result))
+
+        # Vectorize symptoms for prediction
+        symptom_vector = symptoms_to_vector(matched_symptoms, symptom_list)
+
+        # Predict disease and confidence
+        disease, confidence = predict_disease(symptom_vector)
+
+        # Limit confidence and do not overstate certainty
+        if confidence < 0.35:
+            disease = "अनिश्चित"  # "Uncertain"
+            confidence = float(confidence)  # keep low confidence
+
+        # Prepare recommendation text
+        recommendation = recommendation_by_confidence(confidence, matched_symptoms)
+
+        # Create response JSON
+        response = make_response(
+            predicted_disease=disease,
+            confidence_score=confidence,
+            symptoms_matched=matched_symptoms,
+            recommendation=recommendation
+        )
+
+        # Cache result
+        cache_set(symptoms_key, response)
+
+        # Translate response to Hindi
+        hindi_response = translate_response_to_hindi(response)
+        return jsonify(hindi_response)
+
+    except Exception as e:
+        # Log exception traceback internally - do not leak details to user
+        traceback.print_exc()
+        return jsonify({
+            "error": "आपके अनुरोध को संसाधित करते समय आंतरिक सर्वर त्रुटि हुई।"  # "Internal server error occurred processing your request." in Hindi
+        }), 500
+
+
+if __name__ == '__main__':
+    load_model()
+    app.run(host='0.0.0.0', port=5000, debug=False)
