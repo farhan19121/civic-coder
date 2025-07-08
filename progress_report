@@ -11,3 +11,8 @@
 1. Model loading complete
 2. Caching mechanism built
 3. Basic NLP for symptom extraction implemented
+
+========== COMMIT-2 =========
+
+1.completing preprocessing functions 
+2.prepareing for api intigration

@@ -108,3 +108,69 @@ def extract_symptoms(text, known_symptoms):
                 symptoms_found.add(original_sym)
 
     return list(symptoms_found)
+
+def symptoms_to_vector(symptoms, all_symptoms):
+    """
+    Create binary vector for ML model input,
+    1 if symptom present else 0, in the order of all_symptoms list.
+    """
+    vector = np.zeros(len(all_symptoms), dtype=int)
+    symptom_set = set(symptoms)
+    for idx, sym in enumerate(all_symptoms):
+        if sym in symptom_set:
+            vector[idx] = 1
+    return vector.reshape(1, -1)
+
+def recommendation_by_confidence(confidence, symptoms):
+    """
+    Generateing a simple recommendation text based on confidence and symptoms.
+    Always recommend professional consultation.
+    """
+    serious_symptoms = {
+        # sample serious symptoms, extend as needed
+        'chest_pain', 'breathlessness', 'severe_headache', 'unconsciousness', 'blurred_vision',
+        'vomiting', 'persistent_fever', 'loss_of_consciousness'
+    }
+    symptoms_set = set(symptoms)
+    if confidence < 0.4:
+        return "Symptoms are unclear; please monitor your health and consult a healthcare professional if symptoms persist."
+    if symptoms_set.intersection(serious_symptoms):
+        return "Your symptoms may indicate a serious condition. Please seek urgent medical attention."
+    return "Consult a healthcare professional for a precise diagnosis."
+
+def make_response(predicted_disease, confidence_score, symptoms_matched, recommendation):
+    return {
+        "predicted_disease": predicted_disease,
+        "confidence_score": round(confidence_score, 3),
+        "symptoms_matched": symptoms_matched,
+        "recommendation": recommendation,
+        "disclaimer": "This is a preliminary screening tool only. It does not substitute professional medical advice."
+    }
+
+def cache_get(symptoms_key):
+    with cache_lock:
+        return prediction_cache.get(symptoms_key, None)
+
+
+def cache_set(symptoms_key, prediction_result):
+    with cache_lock:
+        if len(prediction_cache) > 1000:  # Simple cache size limit
+            # Pop oldest item (not efficient but sufficient here)
+            prediction_cache.pop(next(iter(prediction_cache)))
+        prediction_cache[symptoms_key] = prediction_result
+
+
+# Background cleanup thread for cache (optional, here for demonstration)
+def cache_cleanup_loop():
+    while True:
+        time.sleep(300)  # Every 5 minutes
+        with cache_lock:
+            if len(prediction_cache) > 1000:
+                # clear half cache
+                keys = list(prediction_cache.keys())
+                for k in keys[:len(keys)//2]:
+                    prediction_cache.pop(k)
+
+
+cache_cleanup_thread = threading.Thread(target=cache_cleanup_loop, daemon=True)
+cache_cleanup_thread.start()
