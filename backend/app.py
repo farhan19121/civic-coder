@@ -1,15 +1,21 @@
+
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 import pandas as pd
 import numpy as np
+import traceback
+import re
+import json
+import joblib
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 import os
-import re
 import threading
 import time
-import json
-import joblib
-
+from collections import defaultdict
+from googletrans import Translator
+import langdetect
 
 # ========== Global Variables and Cache ========== #
 
@@ -174,3 +180,106 @@ def cache_cleanup_loop():
 
 cache_cleanup_thread = threading.Thread(target=cache_cleanup_loop, daemon=True)
 cache_cleanup_thread.start()
+
+
+def translate_to_hindi(text):
+    """Translate text to Hindi if it's not already in Hindi"""
+    try:
+        # First detect language
+        if langdetect.detect(text) != 'hi':
+            translated = translator.translate(text, dest='hi')
+            return translated.text
+        return text
+    except Exception as e:
+        print(f"Translation error: {e}")
+        return text  # Return original if translation fails
+
+def translate_response_to_hindi(response):
+    """Translate the entire response to Hindi"""
+    try:
+        translated_response = {
+            "predicted_disease": translate_to_hindi(response["predicted_disease"]),
+            "confidence_score": response["confidence_score"],  # No translation needed for numbers
+            "symptoms_matched": [translate_to_hindi(sym) for sym in response["symptoms_matched"]],
+            "recommendation": translate_to_hindi(response["recommendation"]),
+            "disclaimer": translate_to_hindi(response["disclaimer"])
+        }
+        return translated_response
+    except Exception as e:
+        print(f"Response translation error: {e}")
+        return response  # Return original if translation fails
+
+
+# ========== backend(Flask Routes) ========== # 
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    try:
+        data = request.get_json(force=True)
+        if not data or 'text' not in data:
+            return jsonify({
+                "error": "Missing 'text' field in JSON input."
+            }), 400
+
+        user_text = str(data['text'])
+        if len(user_text.strip()) == 0:
+            return jsonify({
+                "error": "Input text is empty."
+            }), 400
+
+        # Clean and normalize input text
+        cleaned_text = clean_text(user_text)
+
+        # Extract symptoms from text using known symptoms list
+        matched_symptoms = extract_symptoms(cleaned_text, symptom_list)
+
+        # If no symptoms matched, return partial info but recommend professional consult
+        if len(matched_symptoms) == 0:
+            response = make_response(
+                predicted_disease="Unknown",
+                confidence_score=0.0,
+                symptoms_matched=[],
+                recommendation="Could not identify clear symptoms from input. Please provide specific symptoms or consult a healthcare professional."
+            )
+            return jsonify(response)
+
+        # Check cache for prediction on matched symptoms (order independent)
+        symptoms_key = frozenset(matched_symptoms)
+        cached_result = cache_get(symptoms_key)
+        if cached_result is not None:
+            return jsonify(cached_result)
+
+        # Vectorize symptoms for prediction
+        symptom_vector = symptoms_to_vector(matched_symptoms, symptom_list)
+
+        # Predict disease and confidence
+        disease, confidence = predict_disease(symptom_vector)
+
+        # Limit confidence and do not overstate certainty
+        if confidence < 0.35:
+            disease = "Uncertain"
+            confidence = float(confidence)  # keep low confidence
+
+        # Prepare recommendation text
+        recommendation = recommendation_by_confidence(confidence, matched_symptoms)
+
+        # Create response JSON
+        response = make_response(
+            predicted_disease=disease,
+            confidence_score=confidence,
+            symptoms_matched=matched_symptoms,
+            recommendation=recommendation
+        )
+
+        # Cache result
+        cache_set(symptoms_key, response)
+
+        return jsonify(response)
+
+    except Exception as e:
+        # Log exception traceback internally - do not leak details to user
+        traceback.print_exc()
+        return jsonify({
+            "error": "Internal server error occurred processing your request."
+        }), 500
+
