@@ -12,7 +12,12 @@
 2. Caching mechanism built
 3. Basic NLP for symptom extraction implemented
 
-========== COMMIT-2 =========
+========== COMMIT-3 =========
 
 1.completing preprocessing functions 
 2.prepareing for api intigration
+
+========== COMMIT-4 =========
+
+1.completed ml part 
+2.started working on backend and api building with flask
