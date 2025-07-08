@@ -1,0 +1,7 @@
+========== COMMIT-1 =========
+
+1.Model training and saving implemented.
+
+2.Symptom encoding and caching included.
+
+3.Modular structure with reusability.

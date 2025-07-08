@@ -49,3 +49,14 @@ def train_and_save_model():
     with open(SYMPTOM_LIST_PATH, 'w') as f:
         json.dump(features, f)
     return clf, le, features
+
+def load_model():
+    global model, le_prognosis, symptom_list
+    if os.path.exists(MODEL_PATH) and os.path.exists(SYMPTOM_LIST_PATH):
+        data = joblib.load(MODEL_PATH)
+        model = data['model']
+        le_prognosis = data['le']
+        with open(SYMPTOM_LIST_PATH, 'r') as f:
+            symptom_list = json.load(f)
+    else:
+        model, le_prognosis, symptom_list = train_and_save_model()
