@@ -11,7 +11,7 @@ import Features from "./pages/Features";
 import HowItWorks from "./pages/HowItWorks";
 import AboutUs from "./pages/AboutUs";
 import NotFound from "./pages/NotFound";
-import Chatbot from "./components/Chatbot"
+import Chatbot from "./pages/Chatbot"
 
 const queryClient = new QueryClient();
 
