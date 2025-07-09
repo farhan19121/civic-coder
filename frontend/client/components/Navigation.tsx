@@ -8,7 +8,7 @@ export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { label: "Home", path: "/" },
+    { label: "Chat", path: "/" },
     { label: "How it Works", path: "/how-it-works" },
     { label: "About us", path: "/about-us" },
     { label: "Features", path: "/features" },
@@ -54,10 +54,7 @@ export default function Navigation() {
           </nav>
 
           <div className="flex items-center space-x-4">
-            <button className="bg-primary hover:bg-blue-600 text-white px-6 py-2 rounded-md text-sm font-medium transition-colors">
-              Get Started
-            </button>
-
+            
             {/* Mobile menu button */}
             <button
               className="md:hidden text-white"

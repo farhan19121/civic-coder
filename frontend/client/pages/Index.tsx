@@ -277,7 +277,7 @@ const Chatbot = () => {
         </div>
 
         {/* Input Area */}
-        <div className="bg-white border-t border-gray-200 p-4">
+        <div className="bg-gray border-t border-gray-200 p-4">
           <form onSubmit={handleSubmit} className="flex gap-3">
             <div className="flex-1 relative">
               <textarea
@@ -285,7 +285,7 @@ const Chatbot = () => {
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder={translations[language as keyof typeof translations].placeholder}
                 disabled={isLoading}
-                className="w-full p-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none min-h-[50px] max-h-32"
+                className="w-full p-3 pr-12 border text-black border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none min-h-[50px] max-h-32"
                 rows={1}
               />
             </div>
