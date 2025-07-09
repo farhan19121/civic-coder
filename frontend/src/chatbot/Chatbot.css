@@ -1,0 +1,182 @@
+/* Chatbot.css */
+.app-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+.app-title {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 30px;
+}
+
+.input-form {
+  background-color: #f8f9fa;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.symptom-input {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  margin-bottom: 15px;
+  resize: vertical;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.submit-btn, .clear-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submit-btn {
+  background-color: #3498db;
+  color: white;
+}
+
+.submit-btn:hover {
+  background-color: #2980b9;
+}
+
+.submit-btn:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.clear-btn {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.clear-btn:hover {
+  background-color: #c0392b;
+}
+
+.clear-btn:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.result-container {
+  background-color: #f8f9fa;
+  padding: 25px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.result-container h3 {
+  margin-top: 0;
+  color: #2c3e50;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.result-item {
+  margin-bottom: 15px;
+}
+
+.result-item strong {
+  color: #2c3e50;
+}
+
+.error-message {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.features-section, .benefits-section {
+  margin-bottom: 30px;
+}
+
+.features-section h2, .benefits-section h2 {
+  color: #2c3e50;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 5px;
+  margin-bottom: 20px;
+}
+
+.feature-card {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.feature-card h3 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+.feature-card ul {
+  padding-left: 20px;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.benefit-card {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.benefit-card h4 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+.benefit-card p {
+  margin-bottom: 0;
+}
+
+/* Add to Chatbot.css */
+.language-toggle {
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+.language-toggle button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.language-toggle button:hover {
+  background-color: #2980b9;
+}
+
+@media (max-width: 600px) {
+  .button-group {
+    flex-direction: column;
+  }
+  
+  .benefits-grid {
+    grid-template-columns: 1fr;
+  }
+}
