@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /**
+   * Tailwind CSS theme
+   * tailwind.config.ts expects the following color variables to be expressed as HSL values.
+   * A different format will require also updating the theme in tailwind.config.ts.
+  */
+  :root {
+    --background: 210 100% 6%;
+    --foreground: 0 0% 100%;
+
+    --card: 210 100% 8%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 210 100% 8%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 100% 12%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 100% 12%;
+    --muted-foreground: 0 0% 70%;
+
+    --accent: 217 91% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 100% 12%;
+    --input: 210 100% 10%;
+    --ring: 217 91% 60%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 210 100% 8%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 100% 12%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 210 100% 12%;
+    --sidebar-ring: 217 91% 60%;
+
+    --navy-50: 210 100% 97%;
+    --navy-100: 210 100% 94%;
+    --navy-200: 210 100% 88%;
+    --navy-300: 210 100% 78%;
+    --navy-400: 210 100% 65%;
+    --navy-500: 210 100% 50%;
+    --navy-600: 210 100% 40%;
+    --navy-700: 210 100% 30%;
+    --navy-800: 210 100% 20%;
+    --navy-900: 210 100% 10%;
+    --navy-950: 210 100% 6%;
+
+    --blue-500: 217 91% 60%;
+    --blue-600: 217 91% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

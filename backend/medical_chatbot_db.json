@@ -1,0 +1,10 @@
+{
+  "user123": [
+    {
+      "user_message": "runny nose, congestion, weight loss, weight gain, loss of appetite",
+      "symptoms_detected": [],
+      "system_response": "Please describe your symptoms in more detail. Examples:\n- 'I've had fever and headache for 3 days'\n- 'Sharp stomach pain after eating'\n- 'Dizziness and nausea when standing up'",
+      "timestamp": "2025-07-09T17:52:20.253149"
+    }
+  ]
+}

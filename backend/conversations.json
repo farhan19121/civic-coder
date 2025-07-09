@@ -1,0 +1,34 @@
+{
+  "user123": [
+    {
+      "user_message": "I've been having headaches and fever for 3 days",
+      "symptoms_detected": [],
+      "system_response": "Please describe your symptoms in more detail. For example: 'I have had fever and headache for 2 days' or 'My stomach hurts after eating'",
+      "timestamp": "2025-07-09T17:38:34.136058"
+    },
+    {
+      "user_message": "I've been having headaches and fever for 3 days",
+      "symptoms_detected": [],
+      "system_response": "Please describe your symptoms in more detail. For example: 'I have had fever and headache for 2 days' or 'My stomach hurts after eating'",
+      "timestamp": "2025-07-09T17:39:53.598096"
+    },
+    {
+      "user_message": "I've been having headaches ,fever,chills,joint pain",
+      "symptoms_detected": [],
+      "system_response": "Please describe your symptoms in more detail. For example: 'I have had fever and headache for 2 days' or 'My stomach hurts after eating'",
+      "timestamp": "2025-07-09T17:40:45.085707"
+    },
+    {
+      "user_message": "I have had fever and headache for 2 daysn",
+      "symptoms_detected": [],
+      "system_response": "Please describe your symptoms in more detail. For example: 'I have had fever and headache for 2 days' or 'My stomach hurts after eating'",
+      "timestamp": "2025-07-09T17:41:11.679135"
+    },
+    {
+      "user_message": "runny nose, congestion, weight loss, weight gain, loss of appetite",
+      "symptoms_detected": [],
+      "system_response": "Please describe your symptoms in more detail. For example: 'I have had fever and headache for 2 days' or 'My stomach hurts after eating'",
+      "timestamp": "2025-07-09T17:47:28.548865"
+    }
+  ]
+}
